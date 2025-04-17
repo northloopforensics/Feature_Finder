@@ -199,6 +199,10 @@ class ImageAnalyzer:
                 
                 # Get image dimensions
                 img = Image.open(file_path)
+                # Check if image is in an unsupported mode
+                if img.mode == 'P':
+                    # Convert to RGB for processing
+                    img = img.convert('RGB')
                 width, height = img.size
                 
                 # Create thumbnail for the report
@@ -251,6 +255,11 @@ class ImageAnalyzer:
         """Create a thumbnail from an image and return base64 encoded data"""
         # Create a copy of the image and resize
         thumb = img.copy()
+        
+        # Convert to RGB if image is in palette mode or another incompatible mode
+        if thumb.mode in ('P', 'RGBA', 'LA') or thumb.mode != 'RGB':
+            thumb = thumb.convert('RGB')
+            
         thumb.thumbnail(max_size, Image.LANCZOS)
         
         # Convert to base64 for embedding in HTML
